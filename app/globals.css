@@ -320,3 +320,44 @@ footer li {
 .topbar a:hover svg {
   color: var(--color-gold);
 }
+/* ============================================
+   Global Link Color Fix
+   Override global <a> color when Tailwind classes are applied
+   ============================================ */
+
+/* When a Link has any text-* class, that class should win */
+a.text-cream,
+a.text-cocoa,
+a.text-cocoa-dark,
+a.text-cocoa-light,
+a.text-gold,
+a.text-gray {
+  /* Let the Tailwind class set the color - this rule just ensures 
+     the element selector doesn't override */
+  text-decoration: none;
+}
+
+/* Specifically for active/sidebar states */
+a[class*="text-cream"] {
+  color: var(--color-cream) !important;
+}
+
+a[class*="text-cocoa-dark"] {
+  color: var(--color-cocoa-dark) !important;
+}
+
+a[class*="text-cocoa-light"] {
+  color: var(--color-cocoa-light) !important;
+}
+
+a[class*="text-cocoa"]:not([class*="text-cocoa-dark"]):not([class*="text-cocoa-light"]) {
+  color: var(--color-cocoa) !important;
+}
+
+a[class*="text-gold"] {
+  color: var(--color-gold) !important;
+}
+
+a[class*="text-gray"]:not([class*="text-gray-light"]) {
+  color: var(--color-gray) !important;
+}
