@@ -1,26 +1,281 @@
 @import "tailwindcss";
 
+/* ============================================
+   COCAVYN - Design System
+   Chocolate E-Commerce Theme
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* === Cocoa Brown Shades === */
+  --color-cocoa-dark: #2E1B0E;
+  --color-cocoa: #3E2723;
+  --color-cocoa-light: #5D4037;
+  --color-cocoa-lighter: #8D6E63;
+  
+  /* === Cream & White === */
+  --color-cream: #FFF8E7;
+  --color-cream-dark: #F5E6D3;
+  --color-white: #FFFFFF;
+  
+  /* === Gold Accents (Luxury) === */
+  --color-gold: #D4AF37;
+  --color-gold-dark: #B8941F;
+  --color-gold-light: #E5C76B;
+  
+  /* === Rose (Optional Romantic Accent) === */
+  --color-rose: #E8B4B8;
+  --color-rose-dark: #C9908F;
+  
+  /* === Text & Gray === */
+  --color-text-primary: #2E1B0E;
+  --color-text-secondary: #6B6B6B;
+  --color-text-muted: #9E9E9E;
+  --color-gray: #6B6B6B;
+  --color-gray-light: #E0E0E0;
+  
+  /* === Status Colors === */
+  --color-success: #4CAF50;
+  --color-warning: #FF9800;
+  --color-error: #E53935;
+  --color-info: #2196F3;
+  
+  /* === Defaults === */
+  --background: var(--color-cream);
+  --foreground: var(--color-text-primary);
 }
+
+/* ============================================
+   Tailwind Theme Configuration
+   ============================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-cocoa-dark: var(--color-cocoa-dark);
+  --color-cocoa: var(--color-cocoa);
+  --color-cocoa-light: var(--color-cocoa-light);
+  --color-cocoa-lighter: var(--color-cocoa-lighter);
+  
+  --color-cream: var(--color-cream);
+  --color-cream-dark: var(--color-cream-dark);
+  
+  --color-gold: var(--color-gold);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-gold-light: var(--color-gold-light);
+  
+  --color-rose: var(--color-rose);
+  --color-rose-dark: var(--color-rose-dark);
+  
+  /* Typography */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-bengali: var(--font-hind-siliguri), sans-serif;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   Base Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-cocoa-dark);
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.25rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* ============================================
+   Links
+   ============================================ */
+
+a {
+  color: var(--color-cocoa);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-gold);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--color-cocoa);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-cocoa-dark);
+  color: var(--color-white);
+}
+
+.btn-gold {
+  background-color: var(--color-gold);
+  color: var(--color-cocoa-dark);
+}
+
+.btn-gold:hover {
+  background-color: var(--color-gold-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-cocoa);
+  border: 2px solid var(--color-cocoa);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-cocoa);
+  color: var(--color-white);
+}
+
+/* ============================================
+   Container
+   ============================================ */
+
+.container-custom {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-custom {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ============================================
+   Utility Animations
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-cocoa-light);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cocoa);
+}
+
+/* ============================================
+   Selection Styling
+   ============================================ */
+
+::selection {
+  background-color: var(--color-gold-light);
+  color: var(--color-cocoa-dark);
+}
+
+/* ============================================
+   Bengali Text Support
+   ============================================ */
+
+.bengali {
+  font-family: var(--font-hind-siliguri), sans-serif;
+  line-height: 1.7;
 }
