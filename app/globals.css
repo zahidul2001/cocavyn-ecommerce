@@ -279,3 +279,44 @@ a:hover {
   font-family: var(--font-hind-siliguri), sans-serif;
   line-height: 1.7;
 }
+
+/* ============================================
+   Footer Specific Styles
+   Override global <a> color for footer links
+   ============================================ */
+
+footer a {
+  color: var(--color-cream) !important;
+}
+
+footer a:hover {
+  color: var(--color-gold) !important;
+}
+
+footer .text-cream,
+footer p,
+footer span,
+footer li {
+  color: var(--color-cream);
+}
+/* ============================================
+   TopBar Specific Styles
+   Override global <a> color for TopBar links
+   ============================================ */
+
+.topbar a {
+  color: var(--color-cream) !important;
+}
+
+.topbar a:hover {
+  color: var(--color-gold) !important;
+}
+
+/* Also override for icons (SVG uses currentColor) */
+.topbar svg {
+  color: var(--color-cream);
+}
+
+.topbar a:hover svg {
+  color: var(--color-gold);
+}

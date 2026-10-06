@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import TopBar from "@/components/layout/TopBar";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 // ============================================
 // COCAVYN - Local Font Configuration
@@ -112,7 +115,10 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} ${hindSiliguri.variable}`}
     >
       <body className="antialiased font-sans bg-cream text-cocoa-dark">
+        <TopBar />
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
