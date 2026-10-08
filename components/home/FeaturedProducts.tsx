@@ -74,7 +74,7 @@ export default function FeaturedProducts() {
             Featured Products
           </h2>
           <p className="text-cocoa-light text-lg max-w-2xl mx-auto">
-            আমাদের সেরা chocolate collection — যেগুলো সবচেয়ে বেশি পছন্দ করা হয়।
+            Our best chocolate collection — the ones our customers love the most.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function FeaturedProducts() {
         {/* View All Button */}
         <div className="text-center mt-12">
           <Link href="/shop" className="btn btn-primary">
-            সব Products দেখুন →
+            View All Products →
           </Link>
         </div>
       </div>

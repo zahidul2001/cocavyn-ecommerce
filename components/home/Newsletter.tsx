@@ -44,8 +44,9 @@ export default function Newsletter() {
 
           {/* Subtitle */}
           <p className="text-cream/80 text-lg mb-8 max-w-lg mx-auto">
-            নতুন chocolate, special offer এবং exclusive discount সম্পর্কে
-            প্রথম জানুন।
+            Be the first to know about new chocolate, special offers, and
+            exclusive discounts.
+
           </p>
 
           {/* Form */}
@@ -53,7 +54,7 @@ export default function Newsletter() {
             <div className="bg-success/20 border border-success/30 rounded-xl px-6 py-4 inline-flex items-center gap-3">
               <CheckCircleIcon />
               <span className="text-cream font-medium">
-                ধন্যবাদ! আপনি সফলভাবে subscribe করেছেন। 🎉
+                Thank you! You have successfully subscribed. 🎉
               </span>
             </div>
           ) : (
@@ -63,7 +64,7 @@ export default function Newsletter() {
             >
               <input
                 type="email"
-                placeholder="আপনার email লিখুন"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -80,7 +81,7 @@ export default function Newsletter() {
 
           {/* Privacy Note */}
           <p className="text-cream/60 text-sm mt-6">
-            আমরা spam করি না — শুধু ভালো chocolate 🍫
+            We don't spam — just good chocolate 🍫
           </p>
         </div>
       </div>

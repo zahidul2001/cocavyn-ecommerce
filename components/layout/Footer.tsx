@@ -19,8 +19,8 @@ export default function Footer() {
               COCAVYN
             </h3>
             <p className="text-cream mb-6 leading-relaxed">
-              Premium chocolate for chocolate lovers. Bangladesh-এর সেরা
-              quality-এর chocolate, gift box এবং chocolate bouquet।
+              Premium chocolate for chocolate lovers. The finest quality chocolate,
+              gift boxes, and bouquets in Bangladesh.
             </p>
             <div className="flex items-center gap-3">
               <span className="text-cream text-sm">Follow us:</span>

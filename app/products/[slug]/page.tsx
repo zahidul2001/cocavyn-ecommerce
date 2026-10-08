@@ -23,9 +23,9 @@ const PRODUCTS = [
     category: "dark-chocolate",
     categoryName: "Dark Chocolate",
     stock: 25,
-    shortDescription: "৭০% cocoa-এর premium dark chocolate। Rich, intense flavor।",
+    shortDescription: "Premium Dark Chocolate made with 70% cocoa. Rich, intense flavor.",
     description:
-      "আমাদের Premium Dark Chocolate তৈরি হয় ৭০% pure cocoa দিয়ে। প্রতিটা bite-এ আপনি পাবেন rich, intense chocolate flavor যা চকলেট প্রেমীদের মন ছুঁয়ে যাবে। Perfect for gifting অথবা নিজের জন্য।",
+     "Our Premium Dark Chocolate is made with 70% pure cocoa. Every bite delivers a rich, intense chocolate flavor that chocolate lovers will adore. Perfect for gifting or enjoying yourself.",
     ingredients: "Cocoa mass, cocoa butter, sugar, vanilla extract, soy lecithin",
     weight: "100g",
     flavor: "Dark, Rich, Intense",
@@ -43,9 +43,9 @@ const PRODUCTS = [
     category: "milk-chocolate",
     categoryName: "Milk Chocolate",
     stock: 18,
-    shortDescription: "Creamy milk chocolate — perfect for মিষ্টি lovers।",
+    shortDescription: "Creamy Milk Chocolate — Perfect for those who love something sweet.",
     description:
-      "Milk Chocolate Delight — নরম, ক্রিমি এবং মিষ্টি। যারা milk chocolate ভালোবাসেন তাদের জন্য perfect। প্রতিটা bite-এ creamy sweetness।",
+      "Milk Chocolate Delight — Soft, creamy, and deliciously sweet. Perfect for milk chocolate lovers, with a creamy sweetness in every bite.",
     ingredients: "Sugar, cocoa butter, milk powder, cocoa mass, soy lecithin",
     weight: "120g",
     flavor: "Creamy, Sweet",
@@ -63,9 +63,9 @@ const PRODUCTS = [
     category: "gift-box",
     categoryName: "Gift Box",
     stock: 12,
-    shortDescription: "Premium gift box — ভালোবাসার মানুষকে দেওয়ার জন্য perfect।",
+    shortDescription: "Premium Gift Box — The perfect gift for someone special.",
     description:
-      "Luxury Gift Box — 12 varieties-এর chocolate assortment, সুন্দর packaging-এ। জন্মদিন, বিবাহবার্ষিকী অথবা যেকোনো special occasion-এর জন্য ideal gift।",
+      "Luxury Gift Box — An assortment of 12 delicious chocolate varieties in elegant packaging, perfect for birthdays, anniversaries, and any special occasion.",
     ingredients: "Assorted chocolates, gift packaging",
     weight: "250g",
     flavor: "Assorted",
@@ -83,7 +83,7 @@ const PRODUCTS = [
     stock: 0,
     shortDescription: "Fresh strawberry + premium chocolate — romantic combination।",
     description:
-      "Chocolate Strawberry — তাজা স্ট্রবেরির উপর premium chocolate coating। Romantic occasions-এর জন্য perfect।",
+      "Chocolate Strawberry — Fresh strawberries coated in premium chocolate, perfect for special occasions.",
     ingredients: "Fresh strawberry, dark chocolate, cocoa butter",
     weight: "150g",
     flavor: "Fruity, Sweet",
@@ -103,7 +103,7 @@ const PRODUCTS = [
     stock: 22,
     shortDescription: "Creamy white chocolate truffle — delicate & delicious।",
     description:
-      "White Chocolate Truffle — নরম, delicate এবং highly creamy। White chocolate-এর প্রতিটা bite-এ premium quality।",
+      "White Chocolate Truffle — Soft, delicate, and irresistibly creamy. A premium taste in every bite.",
     ingredients: "Cocoa butter, milk powder, sugar, vanilla",
     weight: "100g",
     flavor: "Creamy, Vanilla",
@@ -119,9 +119,9 @@ const PRODUCTS = [
     category: "chocolate-bouquet",
     categoryName: "Chocolate Bouquet",
     stock: 6,
-    shortDescription: "Chocolate-এর ফুল — unique এবং memorable gift।",
+    shortDescription: "Chocolate Flowers — A unique and memorable gift.",
     description:
-      "Chocolate Bouquet Premium — chocolate-এর হাত-বানানো bouquet। যেকোনো উপলক্ষ্যে অসাধারণ surprise।",
+      "Premium Chocolate Bouquet — A handcrafted chocolate bouquet, perfect for making any occasion extra special.",
     ingredients: "Assorted chocolates, decorative wrap",
     weight: "300g",
     flavor: "Assorted",
@@ -139,7 +139,7 @@ const PRODUCTS = [
     stock: 15,
     shortDescription: "Premium nuts + chocolate — crunchy combination।",
     description:
-      "Nuts Chocolate Assortment — বাদাম এবং chocolate-এর perfect blend। Crunchy texture, rich flavor।",
+      "Nuts Chocolate Assortment — The perfect blend of crunchy nuts and rich, indulgent chocolate.",
     ingredients: "Almonds, cashews, pistachios, chocolate, sugar",
     weight: "150g",
     flavor: "Nutty, Rich",
@@ -157,9 +157,9 @@ const PRODUCTS = [
     category: "chocolate-cake",
     categoryName: "Chocolate Cake",
     stock: 9,
-    shortDescription: "Chocolate cake — birthdays-এর জন্য perfect।",
+    shortDescription: "Chocolate Cake — Perfect for birthdays and special celebrations.",
     description:
-      "Chocolate Cake Special — moist chocolate cake layers, premium cocoa দিয়ে তৈরি। জন্মদিন অথবা যেকোনো celebration-এর জন্য।",
+      "Chocolate Cake Special — Moist chocolate cake layers made with premium cocoa, perfect for birthdays and every special celebration.",
     ingredients: "Flour, cocoa powder, sugar, eggs, butter, cream",
     weight: "500g",
     flavor: "Chocolate, Rich",
@@ -449,7 +449,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 You May Also Like
               </h2>
               <p className="text-cocoa-light">
-                একই ধরনের আরো কিছু chocolate
+                More similar chocolates
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

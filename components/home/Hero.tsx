@@ -10,9 +10,7 @@ export default function Hero() {
     <section className="relative overflow-hidden bg-gradient-to-br from-cream via-cream-dark to-cream">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Top right gold circle */}
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl" />
-        {/* Bottom left cocoa circle */}
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-cocoa/10 blur-3xl" />
       </div>
 
@@ -29,24 +27,24 @@ export default function Hero() {
 
             {/* Main Heading */}
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-cocoa-dark mb-6 leading-tight">
-              এক টুকরো
+              A Piece of
               <br />
-              <span className="text-gold">মিষ্টি সুখ</span>
+              <span className="text-gold">Sweet Happiness</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-cocoa-light mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              আপনার প্রিয় মানুষটির জন্য, অথবা নিজের জন্য। Premium quality-এর
-              chocolate — ভালোবাসার প্রতিটি মুহূর্তকে আরো মিষ্টি করে তুলুন।
+              For someone you love, or just for yourself. Premium chocolate
+              that makes every moment a little sweeter.
             </p>
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link href="/shop" className="btn btn-primary">
-                এখনই কিনুন
+                Shop Now
               </Link>
               <Link href="/shop" className="btn btn-outline">
-                সব চকলেট দেখুন
+                View All Chocolate
               </Link>
             </div>
 
@@ -54,7 +52,7 @@ export default function Hero() {
             <div className="flex flex-wrap gap-6 justify-center lg:justify-start mt-10 pt-8 border-t border-cocoa/10">
               <div className="flex items-center gap-2 text-sm text-cocoa-light">
                 <CheckIcon />
-                <span>১০০% Pure Chocolate</span>
+                <span>100% Pure Chocolate</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-cocoa-light">
                 <CheckIcon />
@@ -70,24 +68,20 @@ export default function Hero() {
           {/* Right: Image / Placeholder */}
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md">
-              {/* Main Image Container */}
               <div className="aspect-square rounded-3xl bg-gradient-to-br from-cocoa via-cocoa-dark to-cocoa shadow-2xl overflow-hidden flex items-center justify-center relative">
-                {/* Placeholder Content */}
                 <div className="text-center px-8">
                   <div className="text-9xl mb-4">🍫</div>
                   <p className="text-cream font-serif text-2xl font-bold">
                     COCAVYN
                   </p>
                   <p className="text-cream/70 text-sm mt-2">
-                    Chocolate Image আসবে এখানে
+                    Chocolate Image Coming Soon
                   </p>
                 </div>
-
-                {/* Decorative shine */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20" />
               </div>
 
-              {/* Floating Badge 1 - Top Left */}
+              {/* Floating Badge 1 */}
               <div className="absolute -top-4 -left-4 bg-cream rounded-2xl shadow-xl px-4 py-3 border border-gold/20">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
@@ -100,7 +94,7 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Floating Badge 2 - Bottom Right */}
+              {/* Floating Badge 2 */}
               <div className="absolute -bottom-4 -right-4 bg-cream rounded-2xl shadow-xl px-4 py-3 border border-gold/20">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-cocoa/10 flex items-center justify-center">

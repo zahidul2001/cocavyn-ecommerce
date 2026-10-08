@@ -64,7 +64,7 @@ export default function BestSellers() {
             Best Sellers
           </h2>
           <p className="text-cocoa-light text-lg max-w-2xl mx-auto">
-            সবচেয়ে জনপ্রিয় chocolate — যেগুলো আমাদের customer-রা সবচেয়ে বেশি পছন্দ করেছেন।
+            Our most popular chocolate — loved and trusted by hundreds of customers.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function BestSellers() {
         {/* View All Button */}
         <div className="text-center mt-12">
           <Link href="/best-sellers" className="btn btn-primary">
-            সব Best Sellers দেখুন →
+            View All Best Sellers →
           </Link>
         </div>
       </div>

@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     template: "%s | COCAVYN",
   },
   description:
-    "COCAVYN — Bangladesh-এর premium chocolate shop. Milk chocolate, dark chocolate, gift boxes, chocolate bouquets — সবার জন্য সেরা চকলেট।",
+    "COCAVYN — Premium chocolates, gift boxes, and chocolate bouquets made for every occasion.",
   keywords: [
     "chocolate",
     "chocolate shop",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     "premium chocolate",
     "dark chocolate",
     "chocolate gift",
-    "চকলেট",
+    "chocolate",
     "COCAVYN",
   ],
   authors: [{ name: "COCAVYN" }],
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     siteName: "COCAVYN",
     title: "COCAVYN — Premium Chocolate for Chocolate Lovers",
     description:
-      "Bangladesh-এর premium chocolate shop. সেরা quality-এর chocolate, gift box, chocolate bouquet।",
+      "Bangladesh’s premium chocolate shop, offering exquisite chocolates, beautifully curated gift boxes, and stunning chocolate bouquets."
   },
   robots: {
     index: true,

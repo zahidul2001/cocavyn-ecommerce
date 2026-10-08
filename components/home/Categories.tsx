@@ -31,7 +31,7 @@ export default function Categories() {
             Shop by Category
           </h2>
           <p className="text-cocoa-light text-lg max-w-2xl mx-auto">
-            আপনার পছন্দের চকলেট খুঁজুন — milk, dark, white, gift box এবং আরো অনেক কিছু।
+             Find your favorite chocolate — milk, dark, white, gift box and much more.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export default function Categories() {
         {/* View All Button */}
         <div className="text-center mt-12">
           <Link href="/shop" className="btn btn-primary">
-            সব Category দেখুন →
+            View All Categories →
           </Link>
         </div>
       </div>
