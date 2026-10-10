@@ -162,3 +162,46 @@ export async function updateProduct(id: string, formData: FormData) {
   // Redirect to products list
   redirect("/admin/products");
 }
+
+// ============================================
+// Delete Product
+// ============================================
+
+export async function deleteProduct(id: string) {
+  const supabase = await createClient();
+
+  // Verify user is logged in
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  // Check if product has orders (foreign key check)
+  const { count } = await supabase
+    .from("order_items")
+    .select("*", { count: "exact", head: true })
+    .eq("product_id", id);
+
+  if (count && count > 0) {
+    return {
+      error: `Cannot delete — this product appears in ${count} order(s). Please keep the product instead of deleting it.`,
+    };
+  }
+
+  // Delete product
+  const { error } = await supabase.from("products").delete().eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  // Revalidate
+  revalidatePath("/admin/products");
+  revalidatePath("/admin");
+  revalidatePath("/shop");
+
+  return { success: true };
+}
