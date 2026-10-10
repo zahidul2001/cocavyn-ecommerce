@@ -55,7 +55,6 @@ export default async function EditProductPage({
 
   return (
     <div>
-      {/* Header */}
       <div className="mb-6">
         <Link
           href="/admin/products"
@@ -72,7 +71,6 @@ export default async function EditProductPage({
         </p>
       </div>
 
-      {/* Form */}
       <ProductForm
         categories={categories || []}
         initialData={product}
@@ -81,10 +79,6 @@ export default async function EditProductPage({
     </div>
   );
 }
-
-// ============================================
-// Icon
-// ============================================
 
 function ArrowLeftIcon() {
   return (
