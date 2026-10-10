@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createProduct } from "@/app/admin/actions/products";
+import { createProduct, updateProduct } from "@/app/admin/actions/products";
 
 // ============================================
 // COCAVYN - Product Form
@@ -17,25 +16,25 @@ interface Category {
 
 interface ProductFormProps {
   categories: Category[];
-  initialData?: any; // For edit mode later
+  initialData?: any;
+  isEditMode?: boolean;
 }
 
 export default function ProductForm({
   categories,
   initialData,
+  isEditMode = false,
 }: ProductFormProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Auto-generate slug from name
   const [name, setName] = useState(initialData?.name || "");
   const [slug, setSlug] = useState(initialData?.slug || "");
 
   const handleNameChange = (value: string) => {
     setName(value);
-    // Auto-generate slug if slug is empty OR user hasn't manually edited
-    if (!initialData) {
+    // Auto-generate slug ONLY in create mode
+    if (!isEditMode) {
       const autoSlug = value
         .toLowerCase()
         .trim()
@@ -54,7 +53,13 @@ export default function ProductForm({
     const formData = new FormData(e.currentTarget);
 
     try {
-      const result = await createProduct(formData);
+      let result;
+
+      if (isEditMode && initialData?.id) {
+        result = await updateProduct(initialData.id, formData);
+      } else {
+        result = await createProduct(formData);
+      }
 
       if (result?.error) {
         setError(result.error);
@@ -179,7 +184,6 @@ export default function ProductForm({
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Price */}
               <div>
                 <label
                   htmlFor="price"
@@ -201,7 +205,6 @@ export default function ProductForm({
                 />
               </div>
 
-              {/* Previous Price */}
               <div>
                 <label
                   htmlFor="previous_price"
@@ -222,7 +225,6 @@ export default function ProductForm({
                 />
               </div>
 
-              {/* Stock */}
               <div>
                 <label
                   htmlFor="stock"
@@ -236,14 +238,13 @@ export default function ProductForm({
                   type="number"
                   min="0"
                   required
-                  defaultValue={initialData?.stock || 0}
+                  defaultValue={initialData?.stock ?? 0}
                   placeholder="25"
                   className="w-full px-4 py-2.5 rounded-lg border border-cocoa/10 bg-cream focus:outline-none focus:border-gold focus:bg-white transition-colors text-cocoa-dark placeholder:text-gray"
                   disabled={loading}
                 />
               </div>
 
-              {/* SKU */}
               <div>
                 <label
                   htmlFor="sku"
@@ -346,10 +347,16 @@ export default function ProductForm({
                   : "bg-cocoa text-cream hover:bg-cocoa-dark"
               }`}
             >
-              {loading ? "Saving..." : "Save Product"}
+              {loading
+                ? "Saving..."
+                : isEditMode
+                ? "Update Product"
+                : "Save Product"}
             </button>
             <p className="text-xs text-gray text-center mt-3">
-              Product will be saved to database
+              {isEditMode
+                ? "Changes will be saved to database"
+                : "Product will be saved to database"}
             </p>
           </div>
         </div>
