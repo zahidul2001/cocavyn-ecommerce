@@ -145,10 +145,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <>
                 <span className="mx-2">/</span>
                 <Link
-                  href={`/shop?category=${product.categories.slug}`}
+                  href={`/shop?category=${(product.categories as any)?.slug}`}
                   className="hover:text-gold"
                 >
-                  {product.categories.name}
+                  {(product.categories as any)?.name}
                 </Link>
               </>
             )}
@@ -210,10 +210,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {/* Category */}
             {product.categories && (
               <Link
-                href={`/shop?category=${product.categories.slug}`}
+                href={`/shop?category=${(product.categories as any)?.slug}`}
                 className="inline-block text-gold text-sm font-medium uppercase tracking-wider mb-3 hover:text-gold-dark"
               >
-                {product.categories.name}
+                {(product.categories as any)?.name}
               </Link>
             )}
 
@@ -350,7 +350,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       Category
                     </p>
                     <p className="font-medium text-cocoa-dark">
-                      {product.categories.name}
+                      {(product.categories as any)?.name}
                     </p>
                   </div>
                 )}
