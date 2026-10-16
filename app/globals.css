@@ -361,3 +361,53 @@ a[class*="text-gold"] {
 a[class*="text-gray"]:not([class*="text-gray-light"]) {
   color: var(--color-gray) !important;
 }
+
+/* ============================================
+   Button Focus Fix
+   Prevents default white flash on click
+   ============================================ */
+
+button:focus {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Preserve button background during click */
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   Prevent Mobile Tap Highlight
+   ============================================ */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  background-clip: padding-box;
+}
+
+/* ============================================
+   Prevent Focus Flash on Buttons
+   Keeps background color during focus
+   ============================================ */
+
+button:focus,
+button:active {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Ensure button color doesn't change on focus */
+button:focus:not(:disabled) {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}

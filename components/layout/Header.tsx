@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
+import { useCart } from "@/lib/cart-context";
 
 // ============================================
 // COCAVYN - Main Header / Navbar
-// Logo, Navigation, Search, Account, Cart
+// With live cart badge count
+// Stage 10.4
 // ============================================
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { itemCount, isLoaded } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-cream shadow-md">
@@ -63,9 +65,11 @@ export default function Header() {
               aria-label="Cart"
             >
               <CartIcon />
-              <span className="absolute -top-0.5 -right-0.5 bg-gold text-cocoa-dark text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {isLoaded && itemCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-gold text-cocoa-dark text-xs font-bold rounded-full min-w-[1.25rem] h-5 px-1 flex items-center justify-center">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
             </Link>
 
             {/* Mobile Menu Button */}

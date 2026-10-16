@@ -4,7 +4,7 @@ import "./globals.css";
 import TopBar from "@/components/layout/TopBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-
+import { CartProvider } from "@/lib/cart-context";
 // ============================================
 // COCAVYN - Local Font Configuration
 // Self-hosted fonts (no internet dependency)
@@ -115,10 +115,12 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} ${hindSiliguri.variable}`}
     >
       <body className="antialiased font-sans bg-cream text-cocoa-dark">
+       <CartProvider>
         <TopBar />
         <Header />
         {children}
         <Footer />
+       </CartProvider> 
       </body>
     </html>
   );

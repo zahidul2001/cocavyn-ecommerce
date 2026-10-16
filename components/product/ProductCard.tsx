@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useCart } from "@/lib/cart-context";
 
 // ============================================
 // COCAVYN - Product Card Component
-// Reusable product card for Homepage, Shop, etc.
+// With Add to Cart — using inline styles for stability
+// Stage 10.2
 // ============================================
 
 export interface ProductCardProps {
@@ -25,6 +27,7 @@ export interface ProductCardProps {
 }
 
 export default function ProductCard({
+  id,
   name,
   slug,
   price,
@@ -38,10 +41,21 @@ export default function ProductCard({
   stock = 10,
   isFeatured,
 }: ProductCardProps) {
+  const { addItem } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
   const handleAddToCart = () => {
+    addItem({
+      id,
+      name,
+      slug,
+      price,
+      imageUrl,
+      imageEmoji,
+      stock,
+    });
+
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
@@ -51,6 +65,15 @@ export default function ProductCard({
   };
 
   const isOutOfStock = stock === 0;
+
+  // Determine button colors (inline for stability)
+  const buttonBg = isOutOfStock
+    ? "#e0e0e0"
+    : addedToCart
+    ? "#4CAF50"
+    : "#3E2723";
+
+  const buttonColor = isOutOfStock ? "#9e9e9e" : "#FFF8E7";
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-cocoa/5 hover:border-gold/40 hover:shadow-xl transition-all duration-300 flex flex-col">
@@ -74,6 +97,7 @@ export default function ProductCard({
         <button
           onClick={handleWishlist}
           className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-cocoa-dark hover:text-rose transition-all z-10 shadow-sm"
+          style={{ outline: "none" }}
           aria-label="Add to wishlist"
         >
           <HeartIcon filled={isWishlisted} />
@@ -143,16 +167,19 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* Add to Cart Button */}
+        {/* Add to Cart Button — Inline Styles */}
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock}
-          className={`mt-auto w-full py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            isOutOfStock
-              ? "bg-gray-light text-gray cursor-not-allowed"
-              : addedToCart
-              ? "bg-success text-white"
-              : "bg-cocoa text-cream hover:bg-cocoa-dark"
+          style={{
+            outline: "none",
+            border: "none",
+            WebkitTapHighlightColor: "transparent",
+            backgroundColor: buttonBg,
+            color: buttonColor,
+          }}
+          className={`mt-auto w-full py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 ${
+            isOutOfStock ? "cursor-not-allowed" : "cursor-pointer"
           }`}
         >
           {isOutOfStock ? (
