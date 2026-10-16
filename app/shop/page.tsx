@@ -1,145 +1,100 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/product/ProductCard";
 
 // ============================================
 // COCAVYN - Shop Page
-// All products with category filter (URL-based)
-// NOTE: Temporary hardcoded data - Stage 9-এ database থেকে আসবে
+// /shop
+// Shows all products from database
 // ============================================
 
 interface ShopPageProps {
   searchParams: Promise<{ category?: string; sort?: string }>;
 }
 
-// Temporary category list (will come from DB later)
-const CATEGORIES = [
-  { name: "Milk Chocolate", slug: "milk-chocolate", count: 12 },
-  { name: "Dark Chocolate", slug: "dark-chocolate", count: 8 },
-  { name: "White Chocolate", slug: "white-chocolate", count: 6 },
-  { name: "Gift Box", slug: "gift-box", count: 15 },
-  { name: "Chocolate Bouquet", slug: "chocolate-bouquet", count: 4 },
-  { name: "Nuts & Chocolate", slug: "nuts-chocolate", count: 9 },
-  { name: "Chocolate Strawberry", slug: "chocolate-strawberry", count: 5 },
-  { name: "Chocolate Cake", slug: "chocolate-cake", count: 7 },
-];
-
-// Temporary product list (will come from DB later)
-const ALL_PRODUCTS = [
-  {
-    id: "1",
-    name: "Premium Dark Chocolate",
-    slug: "premium-dark-chocolate",
-    price: 500,
-    previousPrice: 650,
-    discount: 23,
-    rating: 4.8,
-    reviewCount: 124,
-    imageEmoji: "🍫",
-    category: "dark-chocolate",
-    categoryName: "Dark Chocolate",
-    stock: 25,
-  },
-  {
-    id: "2",
-    name: "Milk Chocolate Delight",
-    slug: "milk-chocolate-delight",
-    price: 350,
-    rating: 4.6,
-    reviewCount: 89,
-    imageEmoji: "🍩",
-    category: "milk-chocolate",
-    categoryName: "Milk Chocolate",
-    stock: 18,
-  },
-  {
-    id: "3",
-    name: "Luxury Gift Box",
-    slug: "luxury-gift-box",
-    price: 1200,
-    previousPrice: 1500,
-    discount: 20,
-    rating: 4.9,
-    reviewCount: 210,
-    imageEmoji: "🎁",
-    category: "gift-box",
-    categoryName: "Gift Box",
-    stock: 12,
-  },
-  {
-    id: "4",
-    name: "Chocolate Strawberry",
-    slug: "chocolate-strawberry",
-    price: 800,
-    rating: 4.7,
-    reviewCount: 156,
-    imageEmoji: "🍓",
-    category: "chocolate-strawberry",
-    categoryName: "Chocolate Strawberry",
-    stock: 0,
-  },
-  {
-    id: "5",
-    name: "White Chocolate Truffle",
-    slug: "white-chocolate-truffle",
-    price: 600,
-    previousPrice: 750,
-    discount: 20,
-    rating: 4.5,
-    reviewCount: 78,
-    imageEmoji: "🍰",
-    category: "white-chocolate",
-    categoryName: "White Chocolate",
-    stock: 22,
-  },
-  {
-    id: "6",
-    name: "Chocolate Bouquet Premium",
-    slug: "chocolate-bouquet-premium",
-    price: 1800,
-    rating: 4.8,
-    reviewCount: 134,
-    imageEmoji: "💐",
-    category: "chocolate-bouquet",
-    categoryName: "Chocolate Bouquet",
-    stock: 6,
-  },
-  {
-    id: "7",
-    name: "Nuts Chocolate Assortment",
-    slug: "nuts-chocolate-assortment",
-    price: 750,
-    rating: 4.6,
-    reviewCount: 92,
-    imageEmoji: "🌰",
-    category: "nuts-chocolate",
-    categoryName: "Nuts & Chocolate",
-    stock: 15,
-  },
-  {
-    id: "8",
-    name: "Chocolate Cake Special",
-    slug: "chocolate-cake-special",
-    price: 950,
-    previousPrice: 1200,
-    discount: 21,
-    rating: 4.7,
-    reviewCount: 167,
-    imageEmoji: "🎂",
-    category: "chocolate-cake",
-    categoryName: "Chocolate Cake",
-    stock: 9,
-  },
-];
-
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-  // Next.js 16: searchParams is a Promise
   const params = await searchParams;
   const selectedCategory = params.category || "";
+  const sortBy = params.sort || "newest";
 
-  // Filter products by category (if selected)
-  const filteredProducts = selectedCategory
-    ? ALL_PRODUCTS.filter((p) => p.category === selectedCategory)
-    : ALL_PRODUCTS;
+  const supabase = await createClient();
+
+  // Fetch categories
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .eq("is_active", true)
+    .order("display_order");
+
+  // Build products query
+  let query = supabase
+    .from("products")
+    .select(
+      `
+      id,
+      name,
+      slug,
+      short_description,
+      price,
+      previous_price,
+      stock,
+      rating,
+      review_count,
+      image_url,
+      category_id,
+      is_featured,
+      is_best_seller,
+      categories (
+        id,
+        name,
+        slug
+      )
+    `
+    )
+    .eq("is_active", true);
+
+  // Filter by category if selected
+  if (selectedCategory) {
+    // Get category id from slug
+    const category = categories?.find((c) => c.slug === selectedCategory);
+    if (category) {
+      query = query.eq("category_id", category.id);
+    }
+  }
+
+  // Sorting
+  switch (sortBy) {
+    case "price-low":
+      query = query.order("price", { ascending: true });
+      break;
+    case "price-high":
+      query = query.order("price", { ascending: false });
+      break;
+    case "rating":
+      query = query.order("rating", { ascending: false });
+      break;
+    case "newest":
+    default:
+      query = query.order("created_at", { ascending: false });
+      break;
+  }
+
+  const { data: products, error } = await query;
+
+  // Get product counts for each category
+  const { data: allProducts } = await supabase
+    .from("products")
+    .select("category_id")
+    .eq("is_active", true);
+
+  const getCategoryCount = (categoryId: string) => {
+    return allProducts?.filter((p) => p.category_id === categoryId).length || 0;
+  };
+
+  // Find selected category name
+  const selectedCategoryName = selectedCategory
+    ? categories?.find((c) => c.slug === selectedCategory)?.name
+    : null;
 
   return (
     <div className="bg-cream min-h-screen">
@@ -152,25 +107,23 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               Home
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-cocoa-dark">Shop</span>
-            {selectedCategory && (
+            <Link href="/shop" className="hover:text-gold">
+              Shop
+            </Link>
+            {selectedCategoryName && (
               <>
                 <span className="mx-2">/</span>
-                <span className="text-cocoa-dark">
-                  {CATEGORIES.find((c) => c.slug === selectedCategory)?.name ||
-                    selectedCategory}
-                </span>
+                <span className="text-cocoa-dark">{selectedCategoryName}</span>
               </>
             )}
           </nav>
 
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-cocoa-dark mb-2">
-            {selectedCategory
-              ? CATEGORIES.find((c) => c.slug === selectedCategory)?.name
-              : "All Chocolate"}
+            {selectedCategoryName || "All Chocolate"}
           </h1>
           <p className="text-cocoa-light">
-            মোট {filteredProducts.length}টি product পাওয়া যাচ্ছে
+            {products?.length || 0} product
+            {(products?.length || 0) !== 1 ? "s" : ""} found
           </p>
         </div>
       </div>
@@ -198,32 +151,33 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     >
                       All Products
                       <span className="float-right text-xs">
-                        {ALL_PRODUCTS.length}
+                        {allProducts?.length || 0}
                       </span>
                     </Link>
                   </li>
-                  {CATEGORIES.map((category) => (
-                    <li key={category.slug}>
-                      <Link
-                        href={`/shop?category=${category.slug}`}
-                        className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                          selectedCategory === category.slug
-                            ? "bg-cocoa text-cream font-medium"
-                            : "text-cocoa-light hover:bg-cream"
-                        }`}
-                      >
-                        {category.name}
-                        <span className="float-right text-xs">
-                          {category.count}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                  {categories?.map((category) => {
+                    const count = getCategoryCount(category.id);
+                    return (
+                      <li key={category.id}>
+                        <Link
+                          href={`/shop?category=${category.slug}`}
+                          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
+                            selectedCategory === category.slug
+                              ? "bg-cocoa text-cream font-medium"
+                              : "text-cocoa-light hover:bg-cream"
+                          }`}
+                        >
+                          {category.name}
+                          <span className="float-right text-xs">{count}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
-              {/* Price Filter (placeholder) */}
-              <div className="mb-8">
+              {/* Price Filter (placeholder for Stage 10) */}
+              <div>
                 <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
                   Price Range
                 </h3>
@@ -242,27 +196,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                   </li>
                 </ul>
                 <p className="text-xs text-gray mt-3 italic">
-                  (Stage 9-এ filtering কাজ করবে)
-                </p>
-              </div>
-
-              {/* Rating Filter (placeholder) */}
-              <div>
-                <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
-                  Rating
-                </h3>
-                <ul className="space-y-2 text-sm text-cocoa-light">
-                  <li className="flex items-center gap-2">
-                    <input type="checkbox" className="accent-cocoa" />
-                    <span>4★ & up</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <input type="checkbox" className="accent-cocoa" />
-                    <span>3★ & up</span>
-                  </li>
-                </ul>
-                <p className="text-xs text-gray mt-3 italic">
-                  (Stage 9-এ filtering কাজ করবে)
+                  (Coming in Stage 10)
                 </p>
               </div>
             </div>
@@ -275,59 +209,117 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <p className="text-sm text-gray">
                 Showing{" "}
                 <span className="text-cocoa-dark font-medium">
-                  {filteredProducts.length}
+                  {products?.length || 0}
                 </span>{" "}
                 products
               </p>
               <div className="flex items-center gap-2">
                 <label className="text-sm text-gray">Sort by:</label>
-                <select className="bg-cream border border-cocoa/10 rounded-lg px-3 py-1.5 text-sm text-cocoa-dark focus:outline-none focus:border-gold">
-                  <option>Popular</option>
-                  <option>Newest</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                  <option>Rating</option>
-                </select>
+                <SortDropdown
+                  currentSort={sortBy}
+                  category={selectedCategory}
+                />
               </div>
             </div>
 
-            {/* Products */}
-            {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-2xl p-12 text-center border border-cocoa/5">
-                <div className="text-6xl mb-4">🍫</div>
-                <h3 className="font-serif text-2xl font-bold text-cocoa-dark mb-2">
-                  কোনো product পাওয়া যায়নি
-                </h3>
-                <p className="text-gray mb-6">
-                  এই category-তে এখনো কোনো product যোগ করা হয়নি।
-                </p>
-                <Link href="/shop" className="btn btn-primary">
-                  সব Products দেখুন
-                </Link>
+            {/* Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
+                Error loading products: {error.message}
               </div>
-            ) : (
+            )}
+
+            {/* Products */}
+            {products && products.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                {filteredProducts.map((product) => (
+                {products.map((product: any) => (
                   <ProductCard
                     key={product.id}
                     id={product.id}
                     name={product.name}
                     slug={product.slug}
-                    price={product.price}
-                    previousPrice={product.previousPrice}
-                    discount={product.discount}
-                    rating={product.rating}
-                    reviewCount={product.reviewCount}
-                    imageEmoji={product.imageEmoji}
-                    category={product.categoryName}
+                    price={Number(product.price)}
+                    previousPrice={
+                      product.previous_price
+                        ? Number(product.previous_price)
+                        : undefined
+                    }
+                    discount={
+                      product.previous_price && product.previous_price > product.price
+                        ? Math.round(
+                            ((product.previous_price - product.price) /
+                              product.previous_price) *
+                              100
+                          )
+                        : undefined
+                    }
+                    rating={Number(product.rating) || 0}
+                    reviewCount={product.review_count || 0}
+                    imageUrl={product.image_url || undefined}
+                    category={product.categories?.name}
                     stock={product.stock}
+                    isFeatured={product.is_featured}
                   />
                 ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl p-12 text-center border border-cocoa/5">
+                <div className="text-6xl mb-4">🍫</div>
+                <h3 className="font-serif text-2xl font-bold text-cocoa-dark mb-2">
+                  No products found
+                </h3>
+                <p className="text-gray mb-6">
+                  {selectedCategory
+                    ? "This category has no products yet."
+                    : "No products available at the moment."}
+                </p>
+                <Link href="/shop" className="btn btn-primary">
+                  View All Products
+                </Link>
               </div>
             )}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ============================================
+// Sort Dropdown Component
+// ============================================
+
+function SortDropdown({
+  currentSort,
+  category,
+}: {
+  currentSort: string;
+  category: string;
+}) {
+  const options = [
+    { value: "newest", label: "Newest" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "price-high", label: "Price: High to Low" },
+    { value: "rating", label: "Rating" },
+  ];
+
+  const baseUrl = category ? `/shop?category=${category}` : "/shop";
+
+  return (
+    <div className="flex items-center gap-2">
+      {options.map((option) => (
+        <Link
+          key={option.value}
+          href={`${baseUrl}${category ? "&" : "?"}sort=${option.value}`}
+          className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
+            currentSort === option.value
+              ? "bg-cocoa text-cream"
+              : "bg-cream text-cocoa-dark hover:bg-cream-dark"
+          }`}
+        >
+          {option.label}
+        </Link>
+      ))}
     </div>
   );
 }

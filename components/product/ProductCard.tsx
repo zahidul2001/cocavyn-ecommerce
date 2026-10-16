@@ -17,7 +17,8 @@ export interface ProductCardProps {
   discount?: number;
   rating?: number;
   reviewCount?: number;
-  imageEmoji?: string; // Temporary - will become image URL later
+  imageUrl?: string;
+  imageEmoji?: string;
   category?: string;
   stock?: number;
   isFeatured?: boolean;
@@ -31,6 +32,7 @@ export default function ProductCard({
   discount,
   rating = 4.5,
   reviewCount = 0,
+  imageUrl,
   imageEmoji = "🍫",
   category,
   stock = 10,
@@ -41,14 +43,11 @@ export default function ProductCard({
 
   const handleAddToCart = () => {
     setAddedToCart(true);
-    // Reset after 2 seconds
     setTimeout(() => setAddedToCart(false), 2000);
-    // TODO: Stage 10 - Real cart logic
   };
 
   const handleWishlist = () => {
     setIsWishlisted(!isWishlisted);
-    // TODO: Stage 16 - Real wishlist logic
   };
 
   const isOutOfStock = stock === 0;
@@ -80,12 +79,20 @@ export default function ProductCard({
           <HeartIcon filled={isWishlisted} />
         </button>
 
-        {/* Product Emoji (Placeholder - will become image) */}
+        {/* Product Image or Emoji */}
         <Link
           href={`/products/${slug}`}
-          className="text-8xl md:text-9xl group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-500"
         >
-          {imageEmoji}
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-8xl md:text-9xl">{imageEmoji}</span>
+          )}
         </Link>
 
         {/* Out of Stock Overlay */}
@@ -100,14 +107,12 @@ export default function ProductCard({
 
       {/* Info Area */}
       <div className="p-4 md:p-5 flex flex-col flex-1">
-        {/* Category */}
         {category && (
           <span className="text-xs text-gray uppercase tracking-wide mb-2">
             {category}
           </span>
         )}
 
-        {/* Product Name */}
         <Link href={`/products/${slug}`}>
           <h3 className="font-serif text-base md:text-lg font-bold text-cocoa-dark hover:text-gold transition-colors line-clamp-2 mb-2 min-h-[3rem]">
             {name}
@@ -150,34 +155,22 @@ export default function ProductCard({
               : "bg-cocoa text-cream hover:bg-cocoa-dark"
           }`}
         >
-          {isOutOfCartState(addedToCart, isOutOfStock)}
+          {isOutOfStock ? (
+            <span>Out of Stock</span>
+          ) : addedToCart ? (
+            <>
+              <CheckSmallIcon />
+              <span>Added!</span>
+            </>
+          ) : (
+            <>
+              <CartSmallIcon />
+              <span>Add to Cart</span>
+            </>
+          )}
         </button>
       </div>
     </div>
-  );
-}
-
-function isOutOfCartState(addedToCart: boolean, isOutOfStock: boolean) {
-  if (isOutOfStock) {
-    return (
-      <>
-        <span>Out of Stock</span>
-      </>
-    );
-  }
-  if (addedToCart) {
-    return (
-      <>
-        <CheckSmallIcon />
-        <span>Added!</span>
-      </>
-    );
-  }
-  return (
-    <>
-      <CartSmallIcon />
-      <span>Add to Cart</span>
-    </>
   );
 }
 
