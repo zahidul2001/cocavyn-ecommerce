@@ -1,202 +1,132 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/product/ProductCard";
 
 // ============================================
 // COCAVYN - Product Details Page
 // Dynamic route: /products/[slug]
-// NOTE: Temporary hardcoded data - Stage 9-এ database থেকে আসবে
+// Database-driven — Stage 9.3
 // ============================================
-
-// Temporary products database (will come from DB later)
-const PRODUCTS = [
-  {
-    id: "1",
-    name: "Premium Dark Chocolate",
-    slug: "premium-dark-chocolate",
-    price: 500,
-    previousPrice: 650,
-    discount: 23,
-    rating: 4.8,
-    reviewCount: 124,
-    imageEmoji: "🍫",
-    category: "dark-chocolate",
-    categoryName: "Dark Chocolate",
-    stock: 25,
-    shortDescription: "Premium Dark Chocolate made with 70% cocoa. Rich, intense flavor.",
-    description:
-     "Our Premium Dark Chocolate is made with 70% pure cocoa. Every bite delivers a rich, intense chocolate flavor that chocolate lovers will adore. Perfect for gifting or enjoying yourself.",
-    ingredients: "Cocoa mass, cocoa butter, sugar, vanilla extract, soy lecithin",
-    weight: "100g",
-    flavor: "Dark, Rich, Intense",
-    isFeatured: true,
-    isBestSeller: true,
-  },
-  {
-    id: "2",
-    name: "Milk Chocolate Delight",
-    slug: "milk-chocolate-delight",
-    price: 350,
-    rating: 4.6,
-    reviewCount: 89,
-    imageEmoji: "🍩",
-    category: "milk-chocolate",
-    categoryName: "Milk Chocolate",
-    stock: 18,
-    shortDescription: "Creamy Milk Chocolate — Perfect for those who love something sweet.",
-    description:
-      "Milk Chocolate Delight — Soft, creamy, and deliciously sweet. Perfect for milk chocolate lovers, with a creamy sweetness in every bite.",
-    ingredients: "Sugar, cocoa butter, milk powder, cocoa mass, soy lecithin",
-    weight: "120g",
-    flavor: "Creamy, Sweet",
-  },
-  {
-    id: "3",
-    name: "Luxury Gift Box",
-    slug: "luxury-gift-box",
-    price: 1200,
-    previousPrice: 1500,
-    discount: 20,
-    rating: 4.9,
-    reviewCount: 210,
-    imageEmoji: "🎁",
-    category: "gift-box",
-    categoryName: "Gift Box",
-    stock: 12,
-    shortDescription: "Premium Gift Box — The perfect gift for someone special.",
-    description:
-      "Luxury Gift Box — An assortment of 12 delicious chocolate varieties in elegant packaging, perfect for birthdays, anniversaries, and any special occasion.",
-    ingredients: "Assorted chocolates, gift packaging",
-    weight: "250g",
-    flavor: "Assorted",
-  },
-  {
-    id: "4",
-    name: "Chocolate Strawberry",
-    slug: "chocolate-strawberry",
-    price: 800,
-    rating: 4.7,
-    reviewCount: 156,
-    imageEmoji: "🍓",
-    category: "chocolate-strawberry",
-    categoryName: "Chocolate Strawberry",
-    stock: 0,
-    shortDescription: "Fresh strawberry + premium chocolate — romantic combination।",
-    description:
-      "Chocolate Strawberry — Fresh strawberries coated in premium chocolate, perfect for special occasions.",
-    ingredients: "Fresh strawberry, dark chocolate, cocoa butter",
-    weight: "150g",
-    flavor: "Fruity, Sweet",
-  },
-  {
-    id: "5",
-    name: "White Chocolate Truffle",
-    slug: "white-chocolate-truffle",
-    price: 600,
-    previousPrice: 750,
-    discount: 20,
-    rating: 4.5,
-    reviewCount: 78,
-    imageEmoji: "🍰",
-    category: "white-chocolate",
-    categoryName: "White Chocolate",
-    stock: 22,
-    shortDescription: "Creamy white chocolate truffle — delicate & delicious।",
-    description:
-      "White Chocolate Truffle — Soft, delicate, and irresistibly creamy. A premium taste in every bite.",
-    ingredients: "Cocoa butter, milk powder, sugar, vanilla",
-    weight: "100g",
-    flavor: "Creamy, Vanilla",
-  },
-  {
-    id: "6",
-    name: "Chocolate Bouquet Premium",
-    slug: "chocolate-bouquet-premium",
-    price: 1800,
-    rating: 4.8,
-    reviewCount: 134,
-    imageEmoji: "💐",
-    category: "chocolate-bouquet",
-    categoryName: "Chocolate Bouquet",
-    stock: 6,
-    shortDescription: "Chocolate Flowers — A unique and memorable gift.",
-    description:
-      "Premium Chocolate Bouquet — A handcrafted chocolate bouquet, perfect for making any occasion extra special.",
-    ingredients: "Assorted chocolates, decorative wrap",
-    weight: "300g",
-    flavor: "Assorted",
-  },
-  {
-    id: "7",
-    name: "Nuts Chocolate Assortment",
-    slug: "nuts-chocolate-assortment",
-    price: 750,
-    rating: 4.6,
-    reviewCount: 92,
-    imageEmoji: "🌰",
-    category: "nuts-chocolate",
-    categoryName: "Nuts & Chocolate",
-    stock: 15,
-    shortDescription: "Premium nuts + chocolate — crunchy combination।",
-    description:
-      "Nuts Chocolate Assortment — The perfect blend of crunchy nuts and rich, indulgent chocolate.",
-    ingredients: "Almonds, cashews, pistachios, chocolate, sugar",
-    weight: "150g",
-    flavor: "Nutty, Rich",
-  },
-  {
-    id: "8",
-    name: "Chocolate Cake Special",
-    slug: "chocolate-cake-special",
-    price: 950,
-    previousPrice: 1200,
-    discount: 21,
-    rating: 4.7,
-    reviewCount: 167,
-    imageEmoji: "🎂",
-    category: "chocolate-cake",
-    categoryName: "Chocolate Cake",
-    stock: 9,
-    shortDescription: "Chocolate Cake — Perfect for birthdays and special celebrations.",
-    description:
-      "Chocolate Cake Special — Moist chocolate cake layers made with premium cocoa, perfect for birthdays and every special celebration.",
-    ingredients: "Flour, cocoa powder, sugar, eggs, butter, cream",
-    weight: "500g",
-    flavor: "Chocolate, Rich",
-  },
-];
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  // Next.js 16: params is a Promise
   const { slug } = await params;
+  const supabase = await createClient();
 
-  // Find product by slug
-  const product = PRODUCTS.find((p) => p.slug === slug);
+  // Fetch product by slug
+  const { data: product, error } = await supabase
+    .from("products")
+    .select(
+      `
+      id,
+      name,
+      slug,
+      description,
+      short_description,
+      price,
+      previous_price,
+      stock,
+      sku,
+      rating,
+      review_count,
+      image_url,
+      category_id,
+      is_active,
+      is_featured,
+      is_best_seller,
+      created_at,
+      categories (
+        id,
+        name,
+        slug
+      )
+    `
+    )
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .single();
 
-  // If product not found → 404
-  if (!product) {
+  // If not found → 404
+  if (error || !product) {
     notFound();
   }
 
-  // Find related products (same category, exclude current)
-  const relatedProducts = PRODUCTS.filter(
-    (p) => p.category === product.category && p.slug !== product.slug
-  ).slice(0, 4);
+  // Fetch related products (same category, exclude current)
+  let relatedProducts: any[] = [];
 
-  // If less than 4 related, fill with random
+  if (product.category_id) {
+    const { data: related } = await supabase
+      .from("products")
+      .select(
+        `
+        id,
+        name,
+        slug,
+        short_description,
+        price,
+        previous_price,
+        stock,
+        rating,
+        review_count,
+        image_url,
+        is_active,
+        is_featured,
+        categories (
+          name
+        )
+      `
+      )
+      .eq("category_id", product.category_id)
+      .eq("is_active", true)
+      .neq("id", product.id)
+      .limit(4);
+
+    relatedProducts = related || [];
+  }
+
+  // If less than 4 related products, fill with other products
   if (relatedProducts.length < 4) {
-    const others = PRODUCTS.filter(
-      (p) =>
-        p.category !== product.category && p.slug !== product.slug
-    ).slice(0, 4 - relatedProducts.length);
-    relatedProducts.push(...others);
+    const { data: others } = await supabase
+      .from("products")
+      .select(
+        `
+        id,
+        name,
+        slug,
+        short_description,
+        price,
+        previous_price,
+        stock,
+        rating,
+        review_count,
+        image_url,
+        is_active,
+        is_featured,
+        categories (
+          name
+        )
+      `
+      )
+      .eq("is_active", true)
+      .neq("id", product.id)
+      .neq("category_id", product.category_id || "")
+      .limit(4 - relatedProducts.length);
+
+    relatedProducts = [...relatedProducts, ...(others || [])];
   }
 
   const isOutOfStock = product.stock === 0;
+  const discount =
+    product.previous_price && product.previous_price > product.price
+      ? Math.round(
+          ((product.previous_price - product.price) / product.previous_price) *
+            100
+        )
+      : 0;
 
   return (
     <div className="bg-cream min-h-screen">
@@ -204,16 +134,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="bg-cream-dark border-b border-cocoa/10">
         <div className="container-custom py-4">
           <nav className="text-sm text-gray">
-            <Link href="/" className="hover:text-gold">Home</Link>
-            <span className="mx-2">/</span>
-            <Link href="/shop" className="hover:text-gold">Shop</Link>
-            <span className="mx-2">/</span>
-            <Link
-              href={`/shop?category=${product.category}`}
-              className="hover:text-gold"
-            >
-              {product.categoryName}
+            <Link href="/" className="hover:text-gold">
+              Home
             </Link>
+            <span className="mx-2">/</span>
+            <Link href="/shop" className="hover:text-gold">
+              Shop
+            </Link>
+            {product.categories && (
+              <>
+                <span className="mx-2">/</span>
+                <Link
+                  href={`/shop?category=${product.categories.slug}`}
+                  className="hover:text-gold"
+                >
+                  {product.categories.name}
+                </Link>
+              </>
+            )}
             <span className="mx-2">/</span>
             <span className="text-cocoa-dark">{product.name}</span>
           </nav>
@@ -229,18 +167,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Main Image */}
               <div className="relative aspect-square bg-gradient-to-br from-cream to-cream-dark rounded-2xl overflow-hidden border border-cocoa/5">
                 {/* Discount Badge */}
-                {product.discount && product.discount > 0 && (
+                {discount > 0 && (
                   <span className="absolute top-4 left-4 bg-gold text-cocoa-dark text-sm font-bold px-3 py-1.5 rounded-full z-10">
-                    -{product.discount}%
+                    -{discount}%
                   </span>
                 )}
 
-                {/* Product Emoji */}
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-[180px] md:text-[220px]">
-                    {product.imageEmoji}
+                {/* Featured Badge */}
+                {product.is_featured && discount === 0 && (
+                  <span className="absolute top-4 left-4 bg-cocoa text-cream text-sm font-bold px-3 py-1.5 rounded-full z-10">
+                    Featured
+                  </span>
+                )}
+
+                {/* Product Image */}
+                {product.image_url ? (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-[180px] md:text-[220px]">🍫</span>
                   </div>
-                </div>
+                )}
 
                 {/* Out of Stock Overlay */}
                 {isOutOfStock && (
@@ -251,30 +202,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </div>
                 )}
               </div>
-
-              {/* Thumbnails */}
-              <div className="grid grid-cols-4 gap-3 mt-4">
-                {[product.imageEmoji, product.imageEmoji, product.imageEmoji, product.imageEmoji].map((emoji, i) => (
-                  <button
-                    key={i}
-                    className="aspect-square bg-cream-dark rounded-lg border border-cocoa/5 hover:border-gold transition-colors flex items-center justify-center text-3xl"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
 
           {/* Right: Info */}
           <div>
             {/* Category */}
-            <Link
-              href={`/shop?category=${product.category}`}
-              className="inline-block text-gold text-sm font-medium uppercase tracking-wider mb-3 hover:text-gold-dark"
-            >
-              {product.categoryName}
-            </Link>
+            {product.categories && (
+              <Link
+                href={`/shop?category=${product.categories.slug}`}
+                className="inline-block text-gold text-sm font-medium uppercase tracking-wider mb-3 hover:text-gold-dark"
+              >
+                {product.categories.name}
+              </Link>
+            )}
 
             {/* Title */}
             <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-cocoa-dark mb-4">
@@ -291,40 +232,55 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     width="18"
                     height="18"
                     viewBox="0 0 24 24"
-                    fill={star <= Math.round(product.rating) ? "currentColor" : "none"}
+                    fill={
+                      star <= Math.round(Number(product.rating))
+                        ? "currentColor"
+                        : "none"
+                    }
                     stroke="currentColor"
                     strokeWidth="2"
-                    className={star <= Math.round(product.rating) ? "text-gold" : "text-gray-light"}
+                    className={
+                      star <= Math.round(Number(product.rating))
+                        ? "text-gold"
+                        : "text-gray-light"
+                    }
                   >
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                   </svg>
                 ))}
               </div>
               <span className="text-sm text-gray">
-                {product.rating.toFixed(1)} ({product.reviewCount} reviews)
+                {Number(product.rating).toFixed(1)} ({product.review_count || 0}{" "}
+                reviews)
               </span>
             </div>
 
             {/* Short Description */}
-            <p className="text-cocoa-light text-lg mb-6 leading-relaxed">
-              {product.shortDescription}
-            </p>
+            {product.short_description && (
+              <p className="text-cocoa-light text-lg mb-6 leading-relaxed">
+                {product.short_description}
+              </p>
+            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
               <span className="font-serif text-3xl md:text-4xl font-bold text-cocoa-dark">
-                ৳{product.price}
+                ৳{Number(product.price).toLocaleString()}
               </span>
-              {product.previousPrice && product.previousPrice > product.price && (
-                <>
-                  <span className="text-xl text-gray line-through">
-                    ৳{product.previousPrice}
-                  </span>
-                  <span className="text-sm bg-gold/20 text-cocoa-dark px-2 py-1 rounded-full font-medium">
-                    Save ৳{product.previousPrice - product.price}
-                  </span>
-                </>
-              )}
+              {product.previous_price &&
+                product.previous_price > product.price && (
+                  <>
+                    <span className="text-xl text-gray line-through">
+                      ৳{Number(product.previous_price).toLocaleString()}
+                    </span>
+                    <span className="text-sm bg-gold/20 text-cocoa-dark px-2 py-1 rounded-full font-medium">
+                      Save ৳
+                      {(
+                        Number(product.previous_price) - Number(product.price)
+                      ).toLocaleString()}
+                    </span>
+                  </>
+                )}
             </div>
 
             {/* Stock Status */}
@@ -343,26 +299,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </>
               )}
             </div>
-
-            {/* Quantity Selector */}
-            {!isOutOfStock && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-cocoa-dark mb-2">
-                  Quantity
-                </label>
-                <div className="inline-flex items-center border border-cocoa/20 rounded-lg overflow-hidden">
-                  <button className="px-4 py-2 text-cocoa-dark hover:bg-cream-dark transition-colors">
-                    −
-                  </button>
-                  <span className="px-6 py-2 font-medium text-cocoa-dark border-x border-cocoa/20">
-                    1
-                  </span>
-                  <button className="px-4 py-2 text-cocoa-dark hover:bg-cream-dark transition-colors">
-                    +
-                  </button>
-                </div>
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -396,50 +332,48 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Quick Info */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-cream-dark rounded-xl border border-cocoa/5">
-              <div>
-                <p className="text-xs text-gray uppercase tracking-wider mb-1">
-                  Weight
-                </p>
-                <p className="font-medium text-cocoa-dark">{product.weight}</p>
+            {(product.sku || product.categories) && (
+              <div className="grid grid-cols-2 gap-4 p-4 bg-cream-dark rounded-xl border border-cocoa/5">
+                {product.sku && (
+                  <div>
+                    <p className="text-xs text-gray uppercase tracking-wider mb-1">
+                      SKU
+                    </p>
+                    <p className="font-medium text-cocoa-dark font-mono text-sm">
+                      {product.sku}
+                    </p>
+                  </div>
+                )}
+                {product.categories && (
+                  <div>
+                    <p className="text-xs text-gray uppercase tracking-wider mb-1">
+                      Category
+                    </p>
+                    <p className="font-medium text-cocoa-dark">
+                      {product.categories.name}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div>
-                <p className="text-xs text-gray uppercase tracking-wider mb-1">
-                  Flavor
-                </p>
-                <p className="font-medium text-cocoa-dark">{product.flavor}</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Product Info Tabs */}
-        <div className="mt-16">
-          <div className="border-b border-cocoa/10 mb-8">
-            <div className="flex gap-8 overflow-x-auto">
-              <button className="pb-4 border-b-2 border-cocoa text-cocoa-dark font-medium whitespace-nowrap">
+        {/* Product Description Section */}
+        {product.description && (
+          <div className="mt-16">
+            <div className="border-b border-cocoa/10 mb-8">
+              <h2 className="pb-4 text-cocoa-dark font-serif text-2xl font-bold">
                 Description
-              </button>
-              <button className="pb-4 border-b-2 border-transparent text-gray hover:text-cocoa-dark whitespace-nowrap">
-                Ingredients
-              </button>
-              <button className="pb-4 border-b-2 border-transparent text-gray hover:text-cocoa-dark whitespace-nowrap">
-                Delivery Info
-              </button>
-              <button className="pb-4 border-b-2 border-transparent text-gray hover:text-cocoa-dark whitespace-nowrap">
-                Reviews ({product.reviewCount})
-              </button>
+              </h2>
+            </div>
+            <div className="max-w-4xl">
+              <p className="text-cocoa-light leading-relaxed whitespace-pre-line">
+                {product.description}
+              </p>
             </div>
           </div>
-          <div className="max-w-4xl">
-            <p className="text-cocoa-light leading-relaxed mb-4">
-              {product.description}
-            </p>
-            <p className="text-cocoa-light leading-relaxed">
-              <strong className="text-cocoa-dark">Ingredients:</strong> {product.ingredients}
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
@@ -449,7 +383,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 You May Also Like
               </h2>
               <p className="text-cocoa-light">
-                More similar chocolates
+                More chocolate you might enjoy
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -459,14 +393,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   id={related.id}
                   name={related.name}
                   slug={related.slug}
-                  price={related.price}
-                  previousPrice={related.previousPrice}
-                  discount={related.discount}
-                  rating={related.rating}
-                  reviewCount={related.reviewCount}
-                  imageEmoji={related.imageEmoji}
-                  category={related.categoryName}
+                  price={Number(related.price)}
+                  previousPrice={
+                    related.previous_price
+                      ? Number(related.previous_price)
+                      : undefined
+                  }
+                  discount={
+                    related.previous_price &&
+                    related.previous_price > related.price
+                      ? Math.round(
+                          ((related.previous_price - related.price) /
+                            related.previous_price) *
+                            100
+                        )
+                      : undefined
+                  }
+                  rating={Number(related.rating) || 0}
+                  reviewCount={related.review_count || 0}
+                  imageUrl={related.image_url || undefined}
+                  category={related.categories?.name}
                   stock={related.stock}
+                  isFeatured={related.is_featured}
                 />
               ))}
             </div>
