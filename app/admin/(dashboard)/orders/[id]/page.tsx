@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import OrderActions from "@/components/admin/OrderActions";
 
 // ============================================
 // COCAVYN - Admin Order Details
 // /admin/orders/[id]
-// Stage 12.2
+// Stage 12.3 — With Order Actions
 // ============================================
 
 interface OrderDetailsProps {
@@ -30,7 +31,6 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   card: "Card",
 };
 
-// Order status flow for timeline
 const ORDER_FLOW = [
   "pending",
   "confirmed",
@@ -115,7 +115,7 @@ export default async function AdminOrderDetailsPage({
         </div>
       </div>
 
-      {/* Order Timeline (unless cancelled) */}
+      {/* Order Timeline */}
       {!isCancelled && (
         <div className="bg-white rounded-2xl p-6 border border-cocoa/5 mb-6">
           <h2 className="font-serif text-lg font-bold text-cocoa-dark mb-5">
@@ -128,10 +128,7 @@ export default async function AdminOrderDetailsPage({
               const isCurrent = index === currentStatusIndex;
 
               return (
-                <div
-                  key={status}
-                  className="flex items-center gap-2 shrink-0"
-                >
+                <div key={status} className="flex items-center gap-2 shrink-0">
                   <div className="flex flex-col items-center gap-2">
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -156,9 +153,7 @@ export default async function AdminOrderDetailsPage({
                   {index < ORDER_FLOW.length - 1 && (
                     <div
                       className={`w-6 md:w-12 h-0.5 -mt-5 ${
-                        index < currentStatusIndex
-                          ? "bg-success"
-                          : "bg-cream"
+                        index < currentStatusIndex ? "bg-success" : "bg-cream"
                       }`}
                     />
                   )}
@@ -171,7 +166,9 @@ export default async function AdminOrderDetailsPage({
 
       {isCancelled && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-6">
-          <p className="font-bold text-red-700 mb-1">❌ This Order is Cancelled</p>
+          <p className="font-bold text-red-700 mb-1">
+            ❌ This Order is Cancelled
+          </p>
           <p className="text-sm text-red-600">
             No further action can be taken on this order.
           </p>
@@ -303,9 +300,7 @@ export default async function AdminOrderDetailsPage({
                 <p className="font-medium text-cocoa-dark">
                   {order.shipping_name}
                 </p>
-                <p className="text-cocoa-light">
-                  {order.shipping_phone}
-                </p>
+                <p className="text-cocoa-light">{order.shipping_phone}</p>
                 <p className="text-cocoa-light leading-relaxed">
                   {order.shipping_address}
                 </p>
@@ -393,34 +388,13 @@ export default async function AdminOrderDetailsPage({
             </div>
           </div>
 
-          {/* Actions (placeholder for Stage 12.3) */}
-          <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
-            <h2 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
-              Actions
-            </h2>
-
-            <div className="space-y-3">
-              <div className="text-sm text-cocoa-light p-3 bg-cream rounded-lg">
-                ⓘ Status update and payment verification coming in Stage 12.3
-              </div>
-
-              <button
-                type="button"
-                disabled
-                className="w-full py-2.5 rounded-lg font-medium text-sm bg-gray-light text-gray cursor-not-allowed"
-              >
-                Update Status
-              </button>
-
-              <button
-                type="button"
-                disabled
-                className="w-full py-2.5 rounded-lg font-medium text-sm bg-gray-light text-gray cursor-not-allowed"
-              >
-                Verify Payment
-              </button>
-            </div>
-          </div>
+          {/* Order Actions */}
+          <OrderActions
+            orderId={order.id}
+            currentStatus={order.order_status}
+            paymentMethod={order.payment_method}
+            paymentStatus={order.payment_status}
+          />
         </div>
       </div>
     </div>
