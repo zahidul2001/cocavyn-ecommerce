@@ -1,66 +1,46 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/product/ProductCard";
 
 // ============================================
 // COCAVYN - Featured Products Section
-// Homepage-এ featured chocolate দেখাবে
-// NOTE: Temporary hardcoded data - Stage 9-এ database থেকে আসবে
+// Homepage-এ featured chocolate from database
+// Stage 9.4.2 — Database-driven
 // ============================================
 
-export default function FeaturedProducts() {
-  // Temporary fake products - will come from database in Stage 9
-  const products = [
-    {
-      id: "1",
-      name: "Premium Dark Chocolate",
-      slug: "premium-dark-chocolate",
-      price: 500,
-      previousPrice: 650,
-      discount: 23,
-      rating: 4.8,
-      reviewCount: 124,
-      imageEmoji: "🍫",
-      category: "Dark Chocolate",
-      stock: 25,
-      isFeatured: true,
-    },
-    {
-      id: "2",
-      name: "Milk Chocolate Delight",
-      slug: "milk-chocolate-delight",
-      price: 350,
-      rating: 4.6,
-      reviewCount: 89,
-      imageEmoji: "🍩",
-      category: "Milk Chocolate",
-      stock: 18,
-    },
-    {
-      id: "3",
-      name: "Luxury Gift Box",
-      slug: "luxury-gift-box",
-      price: 1200,
-      previousPrice: 1500,
-      discount: 20,
-      rating: 4.9,
-      reviewCount: 210,
-      imageEmoji: "🎁",
-      category: "Gift Box",
-      stock: 12,
-      isFeatured: true,
-    },
-    {
-      id: "4",
-      name: "Chocolate Strawberry",
-      slug: "chocolate-strawberry",
-      price: 800,
-      rating: 4.7,
-      reviewCount: 156,
-      imageEmoji: "🍓",
-      category: "Chocolate Strawberry",
-      stock: 0, // Out of stock example
-    },
-  ];
+export default async function FeaturedProducts() {
+  const supabase = await createClient();
+
+  // Fetch featured products
+  const { data: products } = await supabase
+    .from("products")
+    .select(
+      `
+      id,
+      name,
+      slug,
+      short_description,
+      price,
+      previous_price,
+      stock,
+      rating,
+      review_count,
+      image_url,
+      is_featured,
+      categories (
+        name
+      )
+    `
+    )
+    .eq("is_active", true)
+    .eq("is_featured", true)
+    .order("created_at", { ascending: false })
+    .limit(4);
+
+  // If no featured products, don't render section
+  if (!products || products.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 md:py-20 bg-cream-dark">
@@ -74,14 +54,41 @@ export default function FeaturedProducts() {
             Featured Products
           </h2>
           <p className="text-cocoa-light text-lg max-w-2xl mx-auto">
-            Our best chocolate collection — the ones our customers love the most.
+            Our best chocolate collection — the ones our customers love the
+            most.
           </p>
         </div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} {...product} />
+          {products.map((product: any) => (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              slug={product.slug}
+              price={Number(product.price)}
+              previousPrice={
+                product.previous_price
+                  ? Number(product.previous_price)
+                  : undefined
+              }
+              discount={
+                product.previous_price && product.previous_price > product.price
+                  ? Math.round(
+                      ((product.previous_price - product.price) /
+                        product.previous_price) *
+                        100
+                    )
+                  : undefined
+              }
+              rating={Number(product.rating) || 0}
+              reviewCount={product.review_count || 0}
+              imageUrl={product.image_url || undefined}
+              category={product.categories?.name}
+              stock={product.stock}
+              isFeatured={product.is_featured}
+            />
           ))}
         </div>
 
