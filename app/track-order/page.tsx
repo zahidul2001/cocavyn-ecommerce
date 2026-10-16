@@ -7,7 +7,7 @@ import { lookupOrder } from "./actions";
 // ============================================
 // COCAVYN - Track Order Page
 // /track-order
-// Stage 13.2 — With actual lookup
+// Stage 13.3 — With Timeline
 // ============================================
 
 interface OrderData {
@@ -54,6 +54,16 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   nagad: "Nagad",
   card: "Card",
 };
+
+const ORDER_FLOW = [
+  { key: "pending", label: "Pending" },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "processing", label: "Processing" },
+  { key: "packed", label: "Packed" },
+  { key: "shipped", label: "Shipped" },
+  { key: "out_for_delivery", label: "Out for Delivery" },
+  { key: "delivered", label: "Delivered" },
+];
 
 export default function TrackOrderPage() {
   const [orderNumber, setOrderNumber] = useState("");
@@ -120,7 +130,7 @@ export default function TrackOrderPage() {
       {/* Main Content */}
       <div className="container-custom py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
-          {/* Form Card (hidden if order found) */}
+          {/* Form (hidden if order found) */}
           {!order && (
             <>
               <div className="bg-white rounded-2xl p-6 md:p-8 border border-cocoa/5 max-w-xl mx-auto">
@@ -253,8 +263,10 @@ export default function TrackOrderPage() {
             </>
           )}
 
+          {/* Order Result */}
           {order && (
             <div>
+              {/* Order Header */}
               <div className="bg-white rounded-2xl p-6 border border-cocoa/5 mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                   <div>
@@ -291,6 +303,77 @@ export default function TrackOrderPage() {
                 </button>
               </div>
 
+              {/* Timeline */}
+              {order.order_status !== "cancelled" && (
+                <div className="bg-white rounded-2xl p-6 border border-cocoa/5 mb-6">
+                  <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-5">
+                    Order Progress
+                  </h3>
+
+                  <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
+                    {ORDER_FLOW.map((step, index) => {
+                      const currentIndex = ORDER_FLOW.findIndex(
+                        (s) => s.key === order.order_status
+                      );
+                      const isCompleted = index <= currentIndex;
+                      const isCurrent = index === currentIndex;
+
+                      return (
+                        <div
+                          key={step.key}
+                          className="flex items-center gap-2 shrink-0"
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <div
+                              className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                                isCompleted
+                                  ? "bg-success text-white"
+                                  : "bg-cream text-gray"
+                              } ${
+                                isCurrent ? "ring-4 ring-success/20" : ""
+                              }`}
+                            >
+                              {isCompleted ? <CheckSmallIcon /> : index + 1}
+                            </div>
+                            <span
+                              className={`text-xs text-center whitespace-nowrap ${
+                                isCompleted
+                                  ? "text-cocoa-dark font-medium"
+                                  : "text-gray"
+                              }`}
+                            >
+                              {step.label}
+                            </span>
+                          </div>
+
+                          {index < ORDER_FLOW.length - 1 && (
+                            <div
+                              className={`w-6 md:w-10 h-0.5 -mt-5 ${
+                                index < currentIndex
+                                  ? "bg-success"
+                                  : "bg-cream"
+                              }`}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {order.order_status === "cancelled" && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-6">
+                  <p className="font-bold text-red-700 mb-1">
+                    ❌ This Order is Cancelled
+                  </p>
+                  <p className="text-sm text-red-600">
+                    Please contact us for more information.
+                  </p>
+                </div>
+              )}
+
+              {/* Order Items */}
               <div className="bg-white rounded-2xl p-6 border border-cocoa/5 mb-6">
                 <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
                   Order Items
@@ -345,6 +428,7 @@ export default function TrackOrderPage() {
                 </div>
               </div>
 
+              {/* Info Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
                   <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
@@ -425,6 +509,10 @@ export default function TrackOrderPage() {
   );
 }
 
+// ============================================
+// Icons
+// ============================================
+
 function SearchIcon() {
   return (
     <svg
@@ -459,6 +547,24 @@ function SpinnerIcon() {
       className="animate-spin"
     >
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  );
+}
+
+function CheckSmallIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 }
