@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createProduct, updateProduct } from "@/app/admin/actions/products";
+import ImageUpload from "./ImageUpload";
 
 // ============================================
 // COCAVYN - Product Form
@@ -33,7 +34,6 @@ export default function ProductForm({
 
   const handleNameChange = (value: string) => {
     setName(value);
-    // Auto-generate slug ONLY in create mode
     if (!isEditMode) {
       const autoSlug = value
         .toLowerCase()
@@ -65,7 +65,6 @@ export default function ProductForm({
         setError(result.error);
         setLoading(false);
       }
-      // If no error → redirect happens automatically
     } catch (err) {
       console.error("Error:", err);
       setError("Something went wrong. Please try again.");
@@ -268,6 +267,14 @@ export default function ProductForm({
 
         {/* Sidebar Column */}
         <div className="space-y-6">
+          {/* Image */}
+          <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
+            <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">
+              Product Image
+            </h3>
+            <ImageUpload initialUrl={initialData?.image_url || ""} />
+          </div>
+
           {/* Category */}
           <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
             <h3 className="font-serif text-lg font-bold text-cocoa-dark mb-4">

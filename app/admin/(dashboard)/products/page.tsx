@@ -24,6 +24,7 @@ export default async function AdminProductsPage() {
       stock,
       rating,
       review_count,
+      image_url,
       is_active,
       is_featured,
       is_best_seller,
@@ -113,8 +114,16 @@ export default async function AdminProductsPage() {
                     {/* Product */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-cream flex items-center justify-center text-xl shrink-0">
-                          🍫
+                        <div className="w-10 h-10 rounded-lg bg-cream flex items-center justify-center overflow-hidden shrink-0">
+                          {product.image_url ? (
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-xl">🍫</span>
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="font-medium text-cocoa-dark truncate">

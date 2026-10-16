@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/server";
 
 // ============================================
 // COCAVYN - Product Server Actions
-// Server-side functions to manage products
 // ============================================
 
 interface ProductFormData {
@@ -19,6 +18,7 @@ interface ProductFormData {
   stock: number;
   sku: string;
   category_id: string | null;
+  image_url: string;
   is_featured: boolean;
   is_best_seller: boolean;
   is_active: boolean;
@@ -31,7 +31,6 @@ interface ProductFormData {
 export async function createProduct(formData: FormData) {
   const supabase = await createClient();
 
-  // Verify user is logged in
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -40,7 +39,6 @@ export async function createProduct(formData: FormData) {
     return { error: "Not authenticated" };
   }
 
-  // Extract form data
   const productData: ProductFormData = {
     name: (formData.get("name") as string)?.trim(),
     slug: (formData.get("slug") as string)?.trim(),
@@ -54,12 +52,12 @@ export async function createProduct(formData: FormData) {
     stock: parseInt(formData.get("stock") as string) || 0,
     sku: (formData.get("sku") as string)?.trim() || "",
     category_id: (formData.get("category_id") as string) || null,
+    image_url: (formData.get("image_url") as string)?.trim() || "",
     is_featured: formData.get("is_featured") === "on",
     is_best_seller: formData.get("is_best_seller") === "on",
     is_active: formData.get("is_active") === "on",
   };
 
-  // Validation
   if (!productData.name) {
     return { error: "Product name is required" };
   }
@@ -70,27 +68,19 @@ export async function createProduct(formData: FormData) {
     return { error: "Price must be greater than 0" };
   }
 
-  // Insert into database
-  const { data, error } = await supabase
-    .from("products")
-    .insert([productData])
-    .select()
-    .single();
+  const { error } = await supabase.from("products").insert([productData]);
 
   if (error) {
-    // Check for duplicate slug
     if (error.code === "23505") {
       return { error: "A product with this slug already exists" };
     }
     return { error: error.message };
   }
 
-  // Revalidate the products list page (fresh data)
   revalidatePath("/admin/products");
   revalidatePath("/admin");
   revalidatePath("/shop");
 
-  // Redirect to products list
   redirect("/admin/products");
 }
 
@@ -101,7 +91,6 @@ export async function createProduct(formData: FormData) {
 export async function updateProduct(id: string, formData: FormData) {
   const supabase = await createClient();
 
-  // Verify user is logged in
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -110,7 +99,6 @@ export async function updateProduct(id: string, formData: FormData) {
     return { error: "Not authenticated" };
   }
 
-  // Extract form data
   const productData: ProductFormData = {
     name: (formData.get("name") as string)?.trim(),
     slug: (formData.get("slug") as string)?.trim(),
@@ -124,12 +112,12 @@ export async function updateProduct(id: string, formData: FormData) {
     stock: parseInt(formData.get("stock") as string) || 0,
     sku: (formData.get("sku") as string)?.trim() || "",
     category_id: (formData.get("category_id") as string) || null,
+    image_url: (formData.get("image_url") as string)?.trim() || "",
     is_featured: formData.get("is_featured") === "on",
     is_best_seller: formData.get("is_best_seller") === "on",
     is_active: formData.get("is_active") === "on",
   };
 
-  // Validation
   if (!productData.name) {
     return { error: "Product name is required" };
   }
@@ -140,7 +128,6 @@ export async function updateProduct(id: string, formData: FormData) {
     return { error: "Price must be greater than 0" };
   }
 
-  // Update in database
   const { error } = await supabase
     .from("products")
     .update(productData)
@@ -153,13 +140,11 @@ export async function updateProduct(id: string, formData: FormData) {
     return { error: error.message };
   }
 
-  // Revalidate
   revalidatePath("/admin/products");
   revalidatePath("/admin");
   revalidatePath("/shop");
   revalidatePath(`/products/${productData.slug}`);
 
-  // Redirect to products list
   redirect("/admin/products");
 }
 
@@ -170,7 +155,6 @@ export async function updateProduct(id: string, formData: FormData) {
 export async function deleteProduct(id: string) {
   const supabase = await createClient();
 
-  // Verify user is logged in
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -179,7 +163,7 @@ export async function deleteProduct(id: string) {
     return { error: "Not authenticated" };
   }
 
-  // Check if product has orders (foreign key check)
+  // Check if product has orders
   const { count } = await supabase
     .from("order_items")
     .select("*", { count: "exact", head: true })
@@ -191,14 +175,12 @@ export async function deleteProduct(id: string) {
     };
   }
 
-  // Delete product
   const { error } = await supabase.from("products").delete().eq("id", id);
 
   if (error) {
     return { error: error.message };
   }
 
-  // Revalidate
   revalidatePath("/admin/products");
   revalidatePath("/admin");
   revalidatePath("/shop");
