@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import PaymentInstructions from "@/components/checkout/PaymentInstructions";
 
 // ============================================
-// COCAVYN - Order Confirmation Page
+// ORRIVA - Order Confirmation Page
 // /order-confirmation/[orderNumber]
-// Stage 11.6
+// Stage 14.1 — With Payment Instructions
 // ============================================
 
 interface OrderConfirmationProps {
@@ -18,7 +19,7 @@ export default async function OrderConfirmationPage({
   const { orderNumber } = await params;
   const supabase = await createClient();
 
-  // Fetch order by order_number
+  // Fetch order
   const { data: order, error } = await supabase
     .from("orders")
     .select(
@@ -55,13 +56,24 @@ export default async function OrderConfirmationPage({
     .select("id, product_name, price, quantity, image_emoji, subtotal")
     .eq("order_id", order.id);
 
-  // Payment method display
+  // Fetch payment record
+  const { data: payment } = await supabase
+    .from("payments")
+    .select("id, transaction_id, payment_number, status")
+    .eq("order_id", order.id)
+    .maybeSingle();
+
+  // Payment method label
   const paymentLabels: Record<string, string> = {
     cod: "Cash on Delivery",
     bkash: "bKash",
     nagad: "Nagad",
     card: "Card",
   };
+
+  // Show payment instructions only for bKash/Nagad
+  const showPaymentInstructions =
+    order.payment_method === "bkash" || order.payment_method === "nagad";
 
   return (
     <div className="bg-cream min-h-screen">
@@ -97,6 +109,19 @@ export default async function OrderConfirmationPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Details */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Payment Instructions (bKash/Nagad only) */}
+            {showPaymentInstructions && (
+              <PaymentInstructions
+                orderId={order.id}
+                orderNumber={order.order_number}
+                orderTotal={Number(order.total)}
+                paymentMethod={order.payment_method as "bkash" | "nagad"}
+                currentStatus={payment?.status || "pending"}
+                existingTransactionId={payment?.transaction_id}
+                existingPaymentNumber={payment?.payment_number}
+              />
+            )}
+
             {/* Order Items */}
             <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
               <h2 className="font-serif text-xl font-bold text-cocoa-dark mb-4">
@@ -168,65 +193,55 @@ export default async function OrderConfirmationPage({
               </div>
             </div>
 
-            {/* Payment Information */}
-            <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
-              <h2 className="font-serif text-xl font-bold text-cocoa-dark mb-4">
-                Payment Information
-              </h2>
+            {/* Payment Information (for COD or already paid) */}
+            {(!showPaymentInstructions ||
+              order.payment_status === "paid") && (
+              <div className="bg-white rounded-2xl p-6 border border-cocoa/5">
+                <h2 className="font-serif text-xl font-bold text-cocoa-dark mb-4">
+                  Payment Information
+                </h2>
 
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-cocoa-light">Method</span>
-                  <span className="font-medium text-cocoa-dark">
-                    {paymentLabels[order.payment_method] ||
-                      order.payment_method}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-cocoa-light">Status</span>
-                  <span className="inline-flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-warning" />
-                    <span className="font-medium text-cocoa-dark capitalize">
-                      {order.payment_status}
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-cocoa-light">Method</span>
+                    <span className="font-medium text-cocoa-dark">
+                      {paymentLabels[order.payment_method] ||
+                        order.payment_method}
                     </span>
-                  </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-cocoa-light">Status</span>
+                    <span className="inline-flex items-center gap-2">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          order.payment_status === "paid"
+                            ? "bg-success"
+                            : "bg-warning"
+                        }`}
+                      />
+                      <span className="font-medium text-cocoa-dark capitalize">
+                        {order.payment_status}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-cocoa-light">Amount</span>
+                    <span className="font-serif font-bold text-cocoa-dark">
+                      ৳{Number(order.total).toLocaleString()}
+                    </span>
+                  </div>
+
+                  {payment?.transaction_id && (
+                    <div className="pt-3 border-t border-cocoa/5">
+                      <p className="text-cocoa-light mb-1">Transaction ID</p>
+                      <p className="font-mono text-cocoa-dark text-xs">
+                        {payment.transaction_id}
+                      </p>
+                    </div>
+                  )}
                 </div>
-
-                {order.payment_method === "bkash" && (
-                  <div className="mt-4 p-4 bg-pink-50 border border-pink-200 rounded-lg text-xs">
-                    <p className="font-bold text-cocoa-dark mb-1">
-                      bKash Payment Instructions:
-                    </p>
-                    <p className="text-cocoa-light mb-2">
-                      Send ৳{Number(order.total).toLocaleString()} to:
-                    </p>
-                    <p className="font-mono font-bold text-cocoa-dark">
-                      01852134062 (Personal)
-                    </p>
-                    <p className="text-cocoa-light mt-2">
-                      Then contact us with your Transaction ID.
-                    </p>
-                  </div>
-                )}
-
-                {order.payment_method === "nagad" && (
-                  <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg text-xs">
-                    <p className="font-bold text-cocoa-dark mb-1">
-                      Nagad Payment Instructions:
-                    </p>
-                    <p className="text-cocoa-light mb-2">
-                      Send ৳{Number(order.total).toLocaleString()} to:
-                    </p>
-                    <p className="font-mono font-bold text-cocoa-dark">
-                      01852134062 (Personal)
-                    </p>
-                    <p className="text-cocoa-light mt-2">
-                      Then contact us with your Transaction ID.
-                    </p>
-                  </div>
-                )}
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right: Summary */}
@@ -298,7 +313,9 @@ export default async function OrderConfirmationPage({
               <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mx-auto mb-3 border-2 border-gold/30">
                 <span className="text-2xl">📞</span>
               </div>
-              <p className="font-bold text-cocoa-dark mb-1">Confirmation Call</p>
+              <p className="font-bold text-cocoa-dark mb-1">
+                Confirmation Call
+              </p>
               <p className="text-sm text-cocoa-light">
                 We will call you to confirm your order
               </p>
@@ -310,7 +327,7 @@ export default async function OrderConfirmationPage({
               </div>
               <p className="font-bold text-cocoa-dark mb-1">Packing</p>
               <p className="text-sm text-cocoa-light">
-                Your chocolate will be carefully packed
+                Your products will be carefully packed
               </p>
             </div>
 
