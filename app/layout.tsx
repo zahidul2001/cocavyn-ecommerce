@@ -6,7 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/lib/cart-context";
 // ============================================
-// COCAVYN - Local Font Configuration
+// ORRIVA - Local Font Configuration
 // Self-hosted fonts (no internet dependency)
 // ============================================
 
@@ -67,11 +67,11 @@ const hindSiliguri = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "COCAVYN — Premium Chocolate for Chocolate Lovers",
-    template: "%s | COCAVYN",
+    default: "ORRIVA — Premium Quality Products",
+    template: "%s | ORRIVA",
   },
   description:
-    "COCAVYN — Premium chocolates, gift boxes, and chocolate bouquets made for every occasion.",
+    "ORRIVA — Premium quality products curated for every occasion. Chocolates, gift boxes, and more.",
   keywords: [
     "chocolate",
     "chocolate shop",
@@ -80,19 +80,19 @@ export const metadata: Metadata = {
     "dark chocolate",
     "chocolate gift",
     "chocolate",
-    "COCAVYN",
+    "ORRIVA",
   ],
-  authors: [{ name: "COCAVYN" }],
-  creator: "COCAVYN",
-  publisher: "COCAVYN",
-  metadataBase: new URL("https://cocavyn.com"),
+  authors: [{ name: "ORRIVA" }],
+  creator: "ORRIVA",
+  publisher: "ORRIVA",
+  metadataBase: new URL("https://ORRIVA.com"),
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    siteName: "COCAVYN",
-    title: "COCAVYN — Premium Chocolate for Chocolate Lovers",
+    siteName: "ORRIVA",
+    title: "ORRIVA — Premium Chocolate for Chocolate Lovers",
     description:
-      "Bangladesh’s premium chocolate shop, offering exquisite chocolates, beautifully curated gift boxes, and stunning chocolate bouquets."
+      "ORRIVA — Premium quality products curated for every occasion. Bangladesh's trusted destination for chocolates, gift boxes, and more.",
   },
   robots: {
     index: true,

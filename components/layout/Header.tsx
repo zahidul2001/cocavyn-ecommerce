@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 
 // ============================================
-// COCAVYN - Main Header / Navbar
+// ORRIVA - Main Header / Navbar
 // With live cart badge count
 // Stage 10.4
 // ============================================
@@ -22,10 +22,10 @@ export default function Header() {
           <Link
             href="/"
             className="flex items-center gap-2 shrink-0"
-            aria-label="COCAVYN Home"
+            aria-label="ORRIVA Home"
           >
             <span className="font-serif text-3xl md:text-4xl font-bold text-cocoa-dark tracking-wide">
-              COCAVYN
+              ORRIVA
             </span>
           </Link>
 

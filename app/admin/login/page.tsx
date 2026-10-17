@@ -6,7 +6,7 @@ import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 // ============================================
-// COCAVYN - Admin Login Page
+// ORRIVA - Admin Login Page
 // /admin/login
 // ============================================
 
@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <h1 className="font-serif text-4xl font-bold text-cocoa-dark mb-2">
-              COCAVYN
+              ORRIVA
             </h1>
           </Link>
           <p className="text-cocoa-light text-sm uppercase tracking-wider">
@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@cocavyn.com"
+                placeholder="admin@ORRIVA.com"
                 className="w-full px-4 py-3 rounded-lg border border-cocoa/10 bg-cream focus:outline-none focus:border-gold focus:bg-white transition-colors text-cocoa-dark placeholder:text-gray"
                 disabled={loading}
               />

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // ============================================
-// COCAVYN - Admin Sidebar
+// ORRIVA - Admin Sidebar
 // Navigation menu for admin panel
 // ============================================
 
@@ -31,7 +31,7 @@ export default function AdminSidebar({ userEmail }: SidebarProps) {
       {/* Logo */}
       <div className="p-6 border-b border-cream/10">
         <Link href="/admin" className="block">
-          <h1 className="font-serif text-2xl font-bold text-gold">COCAVYN</h1>
+          <h1 className="font-serif text-2xl font-bold text-gold">ORRIVA</h1>
           <p className="text-xs text-cream/60 uppercase tracking-wider mt-1">
             Admin Panel
           </p>

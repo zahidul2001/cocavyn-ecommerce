@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 // ============================================
-// COCAVYN - Hero Section
+// ORRIVA - Hero Section
 // Homepage-এর সবচেয়ে উপরের section
 // ============================================
 
@@ -72,7 +72,7 @@ export default function Hero() {
                 <div className="text-center px-8">
                   <div className="text-9xl mb-4">🍫</div>
                   <p className="text-cream font-serif text-2xl font-bold">
-                    COCAVYN
+                    ORRIVA
                   </p>
                   <p className="text-cream/70 text-sm mt-2">
                     Chocolate Image Coming Soon

@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 // ============================================
-// COCAVYN - About Us Page
+// ORRIVA - About Us Page
 // Business story and values
 // ============================================
 
 export const metadata = {
   title: "About Us",
   description:
-    "Learn about COCAVYN — Bangladesh's premium chocolate shop. Our story, our values, and our passion for premium chocolate.",
+    "Learn about ORRIVA — Bangladesh's premium chocolate shop. Our story, our values, and our passion for premium chocolate.",
 };
 
 export default function AboutPage() {
@@ -26,10 +26,10 @@ export default function AboutPage() {
           </nav>
 
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-cocoa-dark mb-4">
-            About COCAVYN
+            About ORRIVA
           </h1>
           <p className="text-cocoa-light text-lg max-w-2xl">
-            Premium chocolate, crafted with passion, delivered with love.
+            Premium quality products, crafted with passion, delivered with love.
           </p>
         </div>
       </div>
@@ -47,22 +47,21 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-4 text-cocoa-light leading-relaxed">
               <p>
-                COCAVYN was born from a simple belief — that every moment
+                ORRIVA was born from a simple belief — that every moment
                 deserves a touch of sweetness. Based in Sylhet, Bangladesh, we
-                set out to bring premium, world-class chocolate to chocolate
-                lovers across the country.
+                set out to bring premium, world-class products to customers
+                across the country.
               </p>
               <p>
                 Every piece we craft is made with carefully sourced ingredients,
-                time-honored techniques, and a genuine love for chocolate. From
-                rich dark chocolate to creamy milk chocolate, from elegant gift
-                boxes to romantic chocolate bouquets — we offer something for
-                every occasion.
+                time-honored techniques, and a genuine love for quality.From
+                premium chocolates to elegant gift boxes, from curated gift sets
+                to special collections — we offer something for every occasion.
               </p>
               <p>
                 Whether you are celebrating a birthday, an anniversary, or
-                simply treating yourself, COCAVYN is here to make your moment
-                a little sweeter.
+                simply treating yourself, ORRIVA is here to make your moment
+                a little more sweeter.
               </p>
             </div>
           </div>
@@ -73,7 +72,7 @@ export default function AboutPage() {
               <div className="text-center px-8">
                 <div className="text-9xl mb-4">🍫</div>
                 <p className="text-cream font-serif text-3xl font-bold">
-                  COCAVYN
+                  ORRIVA
                 </p>
                 <p className="text-cream/70 text-sm mt-2">
                   Crafted with love in Sylhet
@@ -106,8 +105,8 @@ export default function AboutPage() {
                 Premium Quality
               </h3>
               <p className="text-cocoa-light leading-relaxed">
-                We use only the finest ingredients — pure cocoa, real milk, and
-                no artificial additives. Quality is never compromised.
+                We use only the finest ingredients, carefully sourced from
+                trusted suppliers. Quality is never compromised.
               </p>
             </div>
 

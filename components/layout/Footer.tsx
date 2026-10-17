@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 // ============================================
-// COCAVYN - Footer Component
+// ORRIVA - Footer Component
 // Website-এর নিচের অংশ
 // ============================================
 
@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div>
             <h3 className="font-serif text-3xl font-bold text-gold mb-4">
-              COCAVYN
+              ORRIVA
             </h3>
             <p className="text-cream mb-6 leading-relaxed">
               Premium chocolate for chocolate lovers. The finest quality chocolate,
@@ -98,10 +98,10 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MailIcon />
                 <a
-                  href="mailto:cocavyn@gmail.com"
+                  href="mailto:ORRIVA@gmail.com"
                   className="text-cream hover:text-gold transition-colors break-all"
                 >
-                  cocavyn@gmail.com
+                  Orriva@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3">
@@ -118,7 +118,7 @@ export default function Footer() {
         <div className="container-custom py-5 flex flex-col md:flex-row justify-between items-center gap-3 text-sm">
           <p className="text-cream">
             © {currentYear}{" "}
-            <span className="text-gold font-medium">COCAVYN</span>. All rights
+            <span className="text-gold font-medium">ORRIVA</span>. All rights
             reserved.
           </p>
           <p className="text-cream flex items-center gap-1">
